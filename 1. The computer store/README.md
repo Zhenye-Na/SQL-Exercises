@@ -187,7 +187,7 @@ SELECT m.Name, p.Name, p.Price
 
 ```sql
 INSERT INTO Products(Name , Price , Manufacturer)
-  VALUES ("Loudspeakers", "70", "2")
+  VALUES ('Loudspeakers', 70, 2)
 ;
 ```
 
