@@ -49,7 +49,7 @@ SELECT Pieces.Name
 ;
 ```
 
-Optional solutions:
+***Optional solutions:***
 
 ```sql
 /* With IN subquery */
