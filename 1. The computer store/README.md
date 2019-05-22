@@ -21,7 +21,7 @@ SELECT Name, Price
 ;
 ```
 
-3. Select the name of the products with a price less than or equal to $200.
+3. Select the name of the products with a price less than or equal to `$200`.
 
 ```sql
 SELECT Name
@@ -30,7 +30,7 @@ SELECT Name
 ;
 ```
 
-4. Select all the products with a price between $60 and $120.
+4. Select all the products with a price between `$60` and `$120`.
 
 ```sql
 SELECT *
@@ -40,7 +40,7 @@ SELECT *
 ;
 ```
 
-5. Select the name and price in cents (i.e., the price must be multiplied by 100).
+5. Select the name and price in cents (i.e., the price must be multiplied by `100`).
 
 ```sql
 SELECT Name, Price * 100
@@ -56,7 +56,7 @@ SELECT AVG(Price)
 ;
 ```
 
-7. Compute the average price of all products with manufacturer code equal to 2.
+7. Compute the average price of all products with manufacturer code equal to `2`.
 
 ```sql
 SELECT AVG(p.Price)
@@ -65,7 +65,7 @@ SELECT AVG(p.Price)
 ;
 ```
 
-8. Compute the number of products with a price larger than or equal to $180.
+8. Compute the number of products with a price larger than or equal to `$180`.
 
 ```sql
 SELECT COUNT(*)
@@ -74,35 +74,41 @@ SELECT COUNT(*)
 ;
 ```
 
-9. Select the name and price of all products with a price larger than or equal to $180, and sort first by price (in descending order), and then by name (in ascending order).
+9. Select the name and price of all products with a price larger than or equal to `$180`, and sort **first** by price (in descending order), and then by name (in ascending order).
 
 ```sql
 SELECT p.Name AS Name, p.Price AS Price
   FROM Products AS p
   WHERE p.Price >= 180
-  ORDER BY Name, Price DESC
+  ORDER BY Price DESC, Name
 ;
 ```
 
 10. Select all the data from the products, including all the data for each product's manufacturer.
 
 ```sql
+/* Without INNER JOIN */
 SELECT *
   FROM Products AS p, Manufacturers AS m
   WHERE p.Manufacture == m.Code
+;
+
+/* With INNER JOIN */
+SELECT *
+  FROM Products INNER JOIN Manufacturers
+  ON Products.Manufacturer = Manufacturers.Code
 ;
 ```
 
 11. Select the product name, price, and manufacturer name of all the products.
 
 ```sql
+/* Without INNER JOIN */
 SELECT p.Name, p.Price, m.Name
   FROM Products AS p, Manufacturers AS m
   WHERE p.Manufacturer == m.Code
 ;
-```
 
-```sql
 /* With INNER JOIN */
 SELECT Products.Name, Price, Manufacturers.Name
   FROM Products INNER JOIN Manufacturers
@@ -123,25 +129,32 @@ SELECT AVG(p.Price), m.Code
 13. Select the average price of each manufacturer's products, showing the manufacturer's name.
 
 ```sql
+/* Without INNER JOIN */
 SELECT AVG(p.Price) AS Price, m.Name AS Name
   FROM Products AS p, Manufacturers AS m
   WHERE p.Manufacturer = m.Code
   GROUP BY m.Name
 ;
+
+/* With INNER JOIN */
+SELECT AVG(Price), Manufacturers.Name
+  FROM Products INNER JOIN Manufacturers
+  ON Products.Manufacturer = Manufacturers.Code
+  GROUP BY Manufacturers.Name
+;
 ```
 
-14. Select the names of manufacturer whose products have an average price larger than or equal to $150.
+14. Select the names of manufacturer whose products have an average price larger than or equal to `$150`.
 
 ```sql
+/* Without INNER JOIN */
 SELECT m.Name
   FROM Products AS p, Manufacturers AS m
   WHERE m.Code = p.Manufacturer
   GROUP BY m.Name
   HAVING AVG(p.Price) >= 150
 ;
-```
 
-```sql
 /* With INNER JOIN */
 SELECT Manufacturers.Name
   FROM Products INNER JOIN Manufacturers
@@ -159,9 +172,7 @@ SELECT p.Name, p.Price
   ORDER BY p.Price
   LIMIT 1
 ;
-```
 
-```sql
 /* With a nested SELECT */
 SELECT Name, Price
   FROM Products
@@ -172,15 +183,27 @@ SELECT Name, Price
 16. Select the name of each manufacturer along with the name and price of its most expensive product.
 
 ```sql
-SELECT m.Name, p.Name, p.Price
-  FROM Products AS p
-    INNER JOIN Manufacturers AS m
-      ON p.Manufacturer = m.Code
-        AND p.Price = (SELECT MAX(p2.Price)
-                         FROM Products AS p2
-                         WHERE p2.Manufacturer = m.Code
-                       )
-;
+/* With a nested SELECT and without INNER JOIN */
+  SELECT A.Name, A.Price, F.Name
+  FROM Products A, Manufacturers F
+  WHERE A.Manufacturer = F.Code
+    AND A.Price =
+    (
+      SELECT MAX(A.Price)
+        FROM Products A
+        WHERE A.Manufacturer = F.Code
+    );
+ 
+/* With a nested SELECT and an INNER JOIN */
+  SELECT A.Name, A.Price, F.Name
+  FROM Products A INNER JOIN Manufacturers F
+  ON A.Manufacturer = F.Code
+    AND A.Price =
+    (
+      SELECT MAX(A.Price)
+        FROM Products A
+        WHERE A.Manufacturer = F.Code
+    );
 ```
 
 17. Add a new product: Loudspeakers, $70, manufacturer 2.
@@ -195,8 +218,8 @@ INSERT INTO Products(Name , Price , Manufacturer)
 
 ```sql
 UPDATE Products
-  SET Name = "Laser Printer"
-  WHERE Manufacturer = 8
+  SET Name = 'Laser Printer'
+  WHERE Code = 8
 ;
 ```
 
@@ -208,7 +231,7 @@ UPDATE Products
 ;
 ```
 
-20. Apply a 10% discount to all products with a price larger than or equal to $120.
+20. Apply a 10% discount to all products with a price larger than or equal to `$120`.
 
 ```sql
 UPDATE Products
